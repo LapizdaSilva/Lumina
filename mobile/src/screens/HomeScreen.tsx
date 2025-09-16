@@ -25,8 +25,14 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <Text 
+        style={styles.toptitle}
+      > 
+        Chat
+      </Text>
+
       <Text style={styles.title}>Bem-vindo {userEmail}!</Text>
-      <Text style={styles.subtitle}>Tela inicial</Text>
+
       <Button
         mode="outlined"
         onPress={handleLogout}
@@ -46,12 +52,21 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
+  toptitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 30,
     textAlign: 'center',
     color: '#333',
+    flexDirection: 'row',
   },
   subtitle: {
     fontSize: 18,
