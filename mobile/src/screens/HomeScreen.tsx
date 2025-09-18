@@ -1,48 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import { Button, Text } from 'react-native-paper';
-import { supabase } from '.././supaconfig';
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { supabase } from "../supaconfig";
 
 export default function HomeScreen() {
-  const [userEmail, setUserEmail] = useState('');
+  const [name, setName] = useState<string>("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+    const getProfile = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (user) {
-        setUserEmail(user.email || 'Usuário');
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .single();
+
+        if (!error && data) {
+          setName(data.full_name);
+        }
       }
     };
-    fetchUser();
+
+    getProfile();
   }, []);
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      Alert.alert('Erro ao Sair', error.message);
-    }
-  };
-
   return (
-    <View style={styles.container}>
-      <Text 
-        style={styles.toptitle}
-      > 
-        Chat
-      </Text>
-
-      <Text style={styles.title}>Bem-vindo {userEmail}!</Text>
-
-      <Button
-        mode="outlined"
-        onPress={handleLogout}
-        style={styles.button}
-      >
-        Sair
-      </Button>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text style={styles.toptitle}>Bem-vindo, {name}</Text>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -55,9 +46,8 @@ const styles = StyleSheet.create({
   toptitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
+    color: '#5d1061ff',
+    flexDirection: 'row',
     alignItems: 'center'
   },
   title: {

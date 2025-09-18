@@ -40,6 +40,7 @@ export default function LoginScreen({ navigation }: any) {
         mode="outlined"
         secureTextEntry
         style={styles.input}
+        autoCapitalize='none'
       />
       <Button
         mode="contained"

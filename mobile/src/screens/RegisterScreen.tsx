@@ -80,42 +80,64 @@ export default function RegisterScreen({ navigation }: any) {
     };
 
     const handleRegister = async () => {
-    setLoading(true);
+      setLoading(true);
 
-    if (password.length < 6) {
-        Alert.alert('Erro de Registro', 'A senha deve ter no mínimo 6 caracteres.');
+      if (password.length < 6) {
+        Alert.alert("Erro de Registro", "A senha deve ter no mínimo 6 caracteres.");
         setLoading(false);
         return;
-    }
+      }
 
-    if (!isValidCPF(cpf)) {
-        Alert.alert('Erro de Registro', 'CPF inválido.');
+      if (!isValidCPF(cpf)) {
+        Alert.alert("Erro de Registro", "CPF inválido.");
         setLoading(false);
         return;
-    }
+      }
 
-    if (!isValidDate(dob)) {
-        Alert.alert('Erro de Registro', 'Data de nascimento inválida.');
+      if (!isValidDate(dob)) {
+        Alert.alert("Erro de Registro", "Data de nascimento inválida.");
         setLoading(false);
         return;
-    }
+      }
 
-    const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-        data: { name, cpf, dob, user_type: userType },
-        },
-    });
+      try {
+        const { data, error } = await supabase.auth.signUp({ email, password });
 
-    if (error) {
-        Alert.alert('Erro de Registro', error.message);
-    } else {
-        Alert.alert('Sucesso', 'Verifique seu e-mail para confirmar o registro!');
-        navigation.navigate('Login');
-    }
-    setLoading(false);
-    };
+        if (error) {
+          Alert.alert("Erro de Registro", error.message);
+          setLoading(false);
+          return;
+        }
+
+        const user = data.user;
+        if (user) {
+          const { error: profileError } = await supabase.from("profiles").insert([
+            {
+              id: user.id,
+              full_name: name,
+              cpf,
+              dob,
+              role: userType, // paciente ou psicólogo
+            },
+          ]);
+
+          if (profileError) {
+            Alert.alert("Erro ao criar perfil", profileError.message);
+            setLoading(false);
+            return;
+          }
+        }
+
+        Alert.alert("Sucesso", "Verifique seu e-mail para confirmar o registro!");
+        navigation.navigate("Login");
+      } catch (err) {
+        console.error(err);
+        Alert.alert("Erro inesperado", "Tente novamente mais tarde.");
+      } finally {
+        setLoading(false);
+      }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -141,15 +163,6 @@ export default function RegisterScreen({ navigation }: any) {
 
       <TextInput
         label="Senha"
-        value={password}
-        onChangeText={setPassword}
-        mode="outlined"
-        secureTextEntry
-        style={styles.input}
-      />
-
-      <TextInput
-        label="Confirme sua Senha"
         value={password}
         onChangeText={setPassword}
         mode="outlined"

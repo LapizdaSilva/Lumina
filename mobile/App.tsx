@@ -9,6 +9,7 @@ import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import ChatScreen from "./src/screens/ChatScreen";
+import BottomTabs from "./src/navigation/BottomTabs";
 
 const Stack = createStackNavigator();
 
@@ -53,7 +54,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {session && session.user ? (
-            <Stack.Screen name="Home" component={ChatScreen} />
+            <Stack.Screen name="Chat" component={BottomTabs} />
           ) : (
             <>
               <Stack.Screen name="Login" component={LoginScreen} />

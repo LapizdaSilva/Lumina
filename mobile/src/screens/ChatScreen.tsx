@@ -1,7 +1,7 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Appbar } from "react-native-paper";
-import ChatItem from "../components/chatItem";
+import ChatItem from "../components/ChatItem";
 
 const chats = [
   {
