@@ -13,6 +13,19 @@ export default function RegisterScreen({ navigation }: any) {
   const [loading, setLoading] = useState(false);
 
 
+    const toISODate = (dateString: string): string | null => {
+      const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+      const match = dateString.match(regex);
+      if (!match) return null;
+
+      const day = match[1];
+      const month = match[2];
+      const year = match[3];
+
+      return `${year}-${month}-${day}`; 
+    };
+
+
     const formatDate = (value: string) => {
     let date = value.replace(/\D/g, '');
 
@@ -22,7 +35,7 @@ export default function RegisterScreen({ navigation }: any) {
         date = date.replace(/(\d{2})(\d{2})(\d{0,4})/, '$1/$2/$3');
     } else if (date.length > 2) {
         date = date.replace(/(\d{2})(\d{0,2})/, '$1/$2');
-    }   
+    }
 
     return date;
     };
@@ -66,17 +79,39 @@ export default function RegisterScreen({ navigation }: any) {
         return true;
     };
 
-    const isValidDate = (dateString: string) => {
-        const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-        const match = dateString.match(regex);
-        if (!match) return false;
+    const isValidDate = (dateString: string): boolean => {
+      const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+      const match = dateString.match(regex);
+      if (!match) return false;
 
-        const day = parseInt(match[1], 10);
-        const month = parseInt(match[2], 10) - 1; 
-        const year = parseInt(match[3], 10);
+      const day = parseInt(match[1], 10);
+      const month = parseInt(match[2], 10) - 1;
+      const year = parseInt(match[3], 10);
 
-        const date = new Date(year, month, day);
-        return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
+      const date = new Date(Date.UTC(year, month, day));
+
+      const isRealDate =
+        date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month &&
+        date.getUTCDate() === day;
+      if (!isRealDate) return false;
+
+      const today = new Date();
+      const age = today.getUTCFullYear() - year;
+
+      if (date > today) return false;
+
+      if (year < 1900) return false;
+
+      let actualAge = age;
+      const hasHadBirthdayThisYear =
+        today.getUTCMonth() > month ||
+        (today.getUTCMonth() === month && today.getUTCDate() >= day);
+      if (!hasHadBirthdayThisYear) actualAge--;
+
+      if (actualAge < 14 ) return false;
+
+      return true;
     };
 
     const handleRegister = async () => {
@@ -116,8 +151,8 @@ export default function RegisterScreen({ navigation }: any) {
               id: user.id,
               full_name: name,
               cpf,
-              dob,
-              role: userType, // paciente ou psicólogo
+              dob: toISODate(dob),
+              role: userType, 
             },
           ]);
 
@@ -166,8 +201,9 @@ export default function RegisterScreen({ navigation }: any) {
         value={password}
         onChangeText={setPassword}
         mode="outlined"
-        secureTextEntry
+        secureTextEntry={true }
         style={styles.input}
+        autoCapitalize='none'
       />
 
       <TextInput

@@ -38,9 +38,11 @@ export default function LoginScreen({ navigation }: any) {
         value={password}
         onChangeText={setPassword}
         mode="outlined"
-        secureTextEntry
+        secureTextEntry={true}
         style={styles.input}
         autoCapitalize='none'
+        textContentType="password"
+        importantForAutofill="no"
       />
       <Button
         mode="contained"

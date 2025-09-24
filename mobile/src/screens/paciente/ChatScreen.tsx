@@ -1,7 +1,7 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { Appbar } from "react-native-paper";
-import ChatItem from "../components/ChatItem";
+import ChatItem from "../../components/ChatItem";
 
 const chats = [
   {
@@ -53,5 +53,7 @@ export default function ChatListScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
-  header: { backgroundColor: "#785fb9ff" },
+  header: { 
+    backgroundColor: '#f5f5f5',
+  },
 });

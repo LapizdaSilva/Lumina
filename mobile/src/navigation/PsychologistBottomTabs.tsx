@@ -2,13 +2,13 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import HomeScreen from "../screens/paciente/HomeScreen";
+import PsychologistHomeScreen from "../screens/psicologo/HomeScreen";
 import ChatListScreen from "../screens/paciente/ChatScreen";
-import QueriesScreen from "../screens/paciente/QueriesScreen";
 
 const Tab = createBottomTabNavigator();
 
-export default function BottomTabs() {
+export default function PsychologistBottomTabs() {
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -18,17 +18,27 @@ export default function BottomTabs() {
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof MaterialIcons.glyphMap = "home";
 
-          if (route.name === "Home") iconName = "home";
-          if (route.name === "ChatScreen") iconName = "chat";
-          if (route.name === "Consultas") iconName = "calendar-today";
+          if (route.name === "HomeScreen") iconName = "home";
+          if (route.name === "Mensagens"
+
+
+          ) iconName = "chat";
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Home" }} />
-      <Tab.Screen name="ChatScreen" component={ChatListScreen} options={{ title: "Chat"}}/>
-      <Tab.Screen name="Consultas" component={QueriesScreen} options={{ title: "Consultas "}}/>
+      <Tab.Screen 
+        name="HomeScreen" 
+        component={PsychologistHomeScreen} 
+        options={{ title: "Home" }} 
+      />
+      <Tab.Screen 
+        name="Mensagens" 
+        component={ChatListScreen} 
+        options={{ title: "Mensagens" }}
+      />
     </Tab.Navigator>
   );
 }
+
