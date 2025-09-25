@@ -4,17 +4,20 @@ import { Appbar, Card, Text, Avatar, List } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { supabase } from "../../supaconfig";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../navigation/types";
 
 interface Notification {
   id: string;
   patientName: string;
   message: string;
   avatar: string;
+  
 }
 
 export default function PsychologistHomeScreen() {
   const [name, setName] = useState<string>("");
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: "1",
@@ -96,7 +99,7 @@ export default function PsychologistHomeScreen() {
           </View>
           
           <TouchableOpacity style={[styles.actionCard, styles.patientsCard, styles.fullWidth]}
-            onPress={() => navigation.navigate("History")}
+            onPress={() => navigation.navigate("Patients")}
           >
             <MaterialIcons name="people" size={24} color="white" />
             <Text style={styles.cardText}>Meus pacientes</Text>

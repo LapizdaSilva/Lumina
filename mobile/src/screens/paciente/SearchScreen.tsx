@@ -1,89 +1,120 @@
-import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { Appbar, Text, Avatar, Searchbar, Chip, Button } from "react-native-paper";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { Appbar, Text, Avatar, Searchbar, Chip, Button, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-
-interface Psychologist {
-  id: string;
-  name: string;
-  specialty: string;
-  rating: number;
-  reviewCount: number;
-  avatar: string;
-  paymentType: "Particular" | "Convênio";
-  consultationPrice: number;
-  availability: string[];
-  isFavorite: boolean;
-}
+import { supabase } from "../../supaconfig";
+import { LuminaAPI, PsychologistSearch } from "../../services/api";
 
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  const [psychologists, setPsychologists] = useState<PsychologistSearch[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string>("");
+
   const navigation = useNavigation();
 
-  const psychologists: Psychologist[] = [
-    {
-      id: "1",
-      name: "Fábio Almeida",
-      specialty: "Psicólogo",
-      rating: 5.0,
-      reviewCount: 83,
-      avatar: "https://randomuser.me/api/portraits/men/10.jpg",
-      paymentType: "Particular",
-      consultationPrice: 250.00,
-      availability: ["11:00", "12:00"],
-      isFavorite: false,
-    },
-    {
-      id: "2",
-      name: "Anna Borges",
-      specialty: "Psicóloga",
-      rating: 5.0,
-      reviewCount: 73,
-      avatar: "https://randomuser.me/api/portraits/women/10.jpg",
-      paymentType: "Particular",
-      consultationPrice: 200.00,
-      availability: ["8:00", "9:00", "11:00"],
-      isFavorite: false,
-    },
-    {
-      id: "3",
-      name: "Juliana Dias",
-      specialty: "Psicóloga",
-      rating: 4.9,
-      reviewCount: 66,
-      avatar: "https://randomuser.me/api/portraits/women/11.jpg",
-      paymentType: "Particular",
-      consultationPrice: 255.00,
-      availability: [],
-      isFavorite: false,
-    },
-    {
-      id: "4",
-      name: "Marcos Castro",
-      specialty: "Psiquiatra",
-      rating: 4.3,
-      reviewCount: 23,
-      avatar: "https://randomuser.me/api/portraits/lego/6.jpg",
-      paymentType: "Particular",
-      consultationPrice: 188.00,
-      availability: ["10:00", "14:00", "16:00"],
-      isFavorite: true,
-    },
-  ];
+  const specialties = ["Todos", "Psicólogo Clínico", "Psicóloga", "Psiquiatra", "Terapeuta", "Neuropsicólogo"];
 
-  const specialties = ["Todos", "Psicólogo", "Psiquiatra", "Terapeuta", "Neuropsicólogo"];
+  useEffect(() => {
+    initializeScreen();
+  }, []);
 
-  const filteredPsychologists = psychologists.filter(psychologist => {
-    const matchesSearch = psychologist.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSpecialty = !selectedSpecialty || selectedSpecialty === "Todos" || 
-                            psychologist.specialty === selectedSpecialty;
-    return matchesSearch && matchesSpecialty;
-  });
+  useEffect(() => {
+    if (userId) {
+      searchPsychologists();
+    }
+  }, [searchQuery, selectedSpecialty, userId]);
 
-  const toggleFavorite = (id: string) => {
-    // falta tela favoritos
+  const initializeScreen = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      }
+    } catch (error) {
+      console.error("Erro ao obter usuário:", error);
+    }
+  };
+
+  const searchPsychologists = async () => {
+    try {
+      setLoading(true);
+      const specialtyFilter = selectedSpecialty === "Todos" || !selectedSpecialty ? undefined : selectedSpecialty;
+      const data = await LuminaAPI.searchPsychologists(searchQuery, specialtyFilter, userId);
+      setPsychologists(data);
+    } catch (error) {
+      console.error("Erro ao buscar psicólogos:", error);
+      Alert.alert("Erro", "Não foi possível carregar os psicólogos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleFavorite = async (psychologistId: string) => {
+    try {
+      const isFavorite = await LuminaAPI.toggleFavorite(userId, psychologistId);
+
+      setPsychologists((prev) =>
+        prev.map((psych) =>
+          psych.id === psychologistId
+            ? { ...psych, is_favorite: isFavorite }
+            : psych
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao alterar favorito:", error);
+      Alert.alert("Erro", "Não foi possível alterar o favorito");
+    }
+  };
+
+  const handleScheduleAppointment = async (psychologistId: string, time: string) => {
+    try {
+      Alert.alert(
+        "Agendar Consulta",
+        `Deseja agendar uma consulta para ${time}?`,
+        [
+          { text: "Cancelar", style: "cancel" },
+          {
+            text: "Confirmar",
+            onPress: async () => {
+              try {
+                const today = new Date();
+                const appointmentDate = today.toISOString().split("T")[0];
+
+                await LuminaAPI.createAppointment(
+                  userId,
+                  psychologistId,
+                  appointmentDate,
+                  time,
+                  "online",
+                  "particular",
+                  "Consulta agendada via busca"
+                );
+
+                Alert.alert("Sucesso", "Consulta agendada com sucesso!");
+              } catch (error) {
+                console.error("Erro ao agendar consulta:", error);
+                Alert.alert("Erro", "Não foi possível agendar a consulta");
+              }
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Erro no agendamento:", error);
+    }
+  };
+
+  const getAvailableTimes = () => {
+    return ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"];
+  };
+
+  const formatPaymentTypes = (paymentTypes: string[]) => {
+    return paymentTypes
+      .map((type) => (type === "particular" ? "Particular" : "Convênio"))
+      .join(", ");
   };
 
   return (
@@ -92,7 +123,7 @@ export default function SearchScreen() {
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Busca por psicólogos" titleStyle={styles.headerTitle} />
       </Appbar.Header>
-      
+
       <View style={styles.content}>
         <Searchbar
           placeholder="Encontre pela especialidade desejada"
@@ -100,24 +131,27 @@ export default function SearchScreen() {
           value={searchQuery}
           style={styles.searchBar}
         />
-        <ScrollView 
-          horizontal 
+
+        <ScrollView
+          horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.filtersContainer}
         >
           {specialties.map((specialty) => (
-            <TouchableOpacity 
+            <TouchableOpacity
               key={specialty}
               onPress={() => setSelectedSpecialty(specialty)}
             >
-              <Chip 
+              <Chip
                 selected={selectedSpecialty === specialty}
                 style={[
-                  styles.filterChip, 
-                  selectedSpecialty === specialty && styles.selectedChip
+                  styles.filterChip,
+                  selectedSpecialty === specialty && styles.selectedChip,
                 ]}
                 textStyle={
-                  selectedSpecialty === specialty ? styles.selectedChipText : styles.chipText
+                  selectedSpecialty === specialty
+                    ? styles.selectedChipText
+                    : styles.chipText
                 }
               >
                 {specialty}
@@ -125,210 +159,134 @@ export default function SearchScreen() {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <ScrollView>
-          {filteredPsychologists.map((psychologist) => (
-            <TouchableOpacity key={psychologist.id} style={styles.psychologistCard}>
-              <Avatar.Image 
-                size={60} 
-                source={{ uri: psychologist.avatar }} 
-              />
-              <View style={styles.psychologistInfo}>
-                <View style={styles.nameRow}>
-                  <Text style={styles.psychologistName}>{psychologist.name}</Text>
-                  <TouchableOpacity onPress={() => toggleFavorite(psychologist.id)}>
-                    <MaterialIcons 
-                      name={psychologist.isFavorite ? "favorite" : "favorite-border"} 
-                      size={24}
-                      color={psychologist.isFavorite ? "#f44336" : "#666"} 
-                    />
-                  </TouchableOpacity>
-                </View>
-                
-                <Text style={styles.specialty}>{psychologist.specialty}</Text>
-                
-                <View style={styles.ratingRow}>
-                  {[...Array(5)].map((_, index) => (
-                    <MaterialIcons 
-                      key={index}
-                      name="star" 
-                      size={16} 
-                      color={index < Math.floor(psychologist.rating) ? "#ffc107" : "#e0e0e0"} 
-                    />
-                  ))}
-                  <Text style={styles.ratingText}>
-                    {psychologist.rating} | {psychologist.reviewCount} avaliações
-                  </Text>
-                </View>
-                
-                <View style={styles.paymentRow}>
-                  <Text style={styles.paymentLabel}>Forma de pagamento:</Text>
-                  <Text style={styles.paymentType}>{psychologist.paymentType}</Text>
-                </View>
-                
-                <View style={styles.priceRow}>
-                  <Text style={styles.priceLabel}>Consulta:</Text>
-                  <Text style={styles.price}>R$ {psychologist.consultationPrice.toFixed(2)}</Text>
-                </View>
-                
-                <Text style={styles.modalityText}>Online e Presencial</Text>
-                
-                <Text style={styles.dateText}>Terça 14 - Dezembro</Text>
-                
-                {psychologist.availability.length > 0 ? (
-                  <View style={styles.availabilityRow}>
-                    {psychologist.availability.map((time, index) => (
-                      <Button
-                        key={index}
-                        mode="contained"
-                        style={styles.timeButton}
-                        labelStyle={styles.timeButtonText}
-                      >
-                        {time}
-                      </Button>
-                    ))}
+
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#1976d2" />
+            <Text style={styles.loadingText}>Buscando psicólogos...</Text>
+          </View>
+        ) : (
+          <ScrollView>
+            {psychologists.length > 0 ? (
+              psychologists.map((psychologist) => (
+                <TouchableOpacity key={psychologist.id} style={styles.psychologistCard}>
+                  <Avatar.Image
+                    size={50}
+                    source={{
+                      uri: psychologist.avatar_url || "https://randomuser.me/api/portraits/men/1.jpg",
+                    }}
+                  />
+                  <View style={styles.psychologistInfo}>
+                    <View style={styles.nameRow}>
+                      <Text style={styles.psychologistName}>{psychologist.name}</Text>
+                      <TouchableOpacity onPress={() => toggleFavorite(psychologist.id)}>
+                        <MaterialIcons
+                          name={psychologist.is_favorite ? "favorite" : "favorite-border"}
+                          size={22}
+                          color={psychologist.is_favorite ? "#f44336" : "#666"}
+                        />
+                      </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.specialty}>{psychologist.specialty}</Text>
+
+                    <View style={styles.ratingRow}>
+                      {[...Array(5)].map((_, index) => (
+                        <MaterialIcons
+                          key={index}
+                          name="star"
+                          size={16}
+                          color={index < Math.floor(psychologist.rating) ? "#ffc107" : "#e0e0e0"}
+                        />
+                      ))}
+                      <Text style={styles.ratingText}>
+                        {psychologist.rating} | {psychologist.review_count} avaliações
+                      </Text>
+                    </View>
+
+                    <Text style={styles.paymentText}>
+                      Forma de pagamento: {formatPaymentTypes(psychologist.payment_types)}
+                    </Text>
+
+                    <Text style={styles.priceText}>
+                      Consulta: R$ {psychologist.consultation_price?.toFixed(2) || "0,00"}
+                    </Text>
+
+                    <Text style={styles.modalityText}>
+                      {psychologist.session_types
+                        .map((type) => (type === "online" ? "Online" : "Presencial"))
+                        .join(" e ")}
+                    </Text>
+
+                    <Text style={styles.dateText}>Horários Disponíveis</Text>
+
+                    <View style={styles.availabilityRow}>
+                      {getAvailableTimes().slice(0, 3).map((time, index) => (
+                        <Button
+                          key={index}
+                          mode="contained"
+                          style={styles.timeButton}
+                          labelStyle={styles.timeButtonText}
+                          onPress={() => handleScheduleAppointment(psychologist.id, time)}
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </View>
                   </View>
-                ) : (
-                  <Text style={styles.noAvailabilityText}>Sem horários disponíveis</Text>
-                )}
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View style={styles.emptyContainer}>
+                <MaterialIcons name="search-off" size={64} color="#ccc" />
+                <Text style={styles.emptyText}>
+                  {searchQuery || selectedSpecialty
+                    ? "Nenhum psicólogo encontrado com os filtros aplicados"
+                    : "Nenhum psicólogo disponível no momento"}
+                </Text>
               </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+            )}
+          </ScrollView>
+        )}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  header: {
-    backgroundColor: "#f5f5f5",
-    elevation: 0,
-  },
-  headerTitle: {
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  searchBar: {
-    marginBottom: 16,
-    elevation: 2,
-  },
-  filtersContainer: {
-    marginBottom: 30,
-  },
-  filterChip: {
-    marginRight: 8,
-    backgroundColor: "#f5f5f5",
-  },
-  selectedChip: {
-    backgroundColor: "#1976d2",
-  },
-  chipText: {
-    color: "#666",
-  },
-  selectedChipText: {
-    color: "white",
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
+  header: { backgroundColor: "#f5f5f5", elevation: 0 },
+  headerTitle: { fontWeight: "bold", fontSize: 20 },
+  content: { flex: 1, padding: 16 },
+  searchBar: { marginBottom: 16, elevation: 2 },
+  filtersContainer: { marginBottom: 25 },
+  filterChip: { marginRight: 8, backgroundColor: "#f5f5f5" },
+  selectedChip: { backgroundColor: "#1976d2" },
+  chipText: { color: "#666" },
+  selectedChipText: { color: "white" },
+  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 50 },
+  loadingText: { marginTop: 16, fontSize: 16, color: "#666" },
+  emptyContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 50 },
+  emptyText: { fontSize: 16, color: "#666", textAlign: "center", marginTop: 16, paddingHorizontal: 32 },
   psychologistCard: {
     flexDirection: "row",
     backgroundColor: "#f9f9f9",
     borderRadius: 12,
-    marginTop: 2,
-    marginBottom: 16,
+    padding: 16,
+    marginBottom: 12,
     alignItems: "flex-start",
   },
-  psychologistInfo: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  nameRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 2,
-  },
-  psychologistName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1976d2",
-  },
-  specialty: {
-    fontSize: 14,
-    color: "#666",
-  },
-  ratingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  ratingText: {
-    fontSize: 12,
-    color: "#666",
-    marginLeft: 4,
-  },
-  paymentRow: {
-    flexDirection: "row",
-    marginBottom: 4,
-  },
-  paymentLabel: {
-    fontSize: 12,
-    color: "#666",
-  },
-  paymentType: {
-    fontSize: 12,
-    color: "#333",
-    fontWeight: "500",
-    marginLeft: 4,
-  },
-  priceRow: {
-    flexDirection: "row",
-    marginBottom: 4,
-  },
-  priceLabel: {
-    fontSize: 12,
-    color: "#666",
-  },
-  price: {
-    fontSize: 12,
-    color: "#333",
-    fontWeight: "500",
-    marginLeft: 4,
-  },
-  modalityText: {
-    fontSize: 12,
-    color: "#666",
-    marginBottom: 8,
-  },
-  dateText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8,
-  },
-  availabilityRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  timeButton: {
-    backgroundColor: "#1976d2",
-    marginRight: 8,
-    marginBottom: 4,
-  },
-  timeButtonText: {
-    fontSize: 12,
-    color: "white",
-  },
-  noAvailabilityText: {
-    fontSize: 12,
-    color: "#f44336",
-    fontStyle: "italic",
-  },
+  psychologistInfo: { flex: 1, marginLeft: 12 },
+  nameRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 2 },
+  psychologistName: { fontSize: 16, fontWeight: "bold", color: "#333" },
+  specialty: { fontSize: 14, color: "#666", marginBottom: 4 },
+  ratingRow: { flexDirection: "row", alignItems: "center", marginBottom: 4 },
+  ratingText: { fontSize: 12, color: "#666", marginLeft: 4 },
+  paymentText: { fontSize: 12, color: "#666", marginBottom: 2 },
+  priceText: { fontSize: 12, color: "#666", marginBottom: 2 },
+  modalityText: { fontSize: 12, color: "#666", marginBottom: 6 },
+  dateText: { fontSize: 14, fontWeight: "bold", color: "#333", marginBottom: 6 },
+  availabilityRow: { flexDirection: "row", flexWrap: "wrap" },
+  timeButton: { backgroundColor: "#1976d2", marginRight: 8, marginBottom: 4, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 },
+  timeButtonText: { fontSize: 12, color: "white" },
 });
-

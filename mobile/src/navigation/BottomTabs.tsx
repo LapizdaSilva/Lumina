@@ -3,8 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import HomeScreen from "../screens/paciente/HomeScreen";
-import ChatListScreen from "../screens/paciente/ChatScreen";
+import ChatListScreen from "../screens/ChatListScreen";
 import QueriesScreen from "../screens/paciente/QueriesScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -17,18 +18,18 @@ export default function BottomTabs() {
         tabBarInactiveTintColor: "gray",
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof MaterialIcons.glyphMap = "home";
-
           if (route.name === "Home") iconName = "home";
-          if (route.name === "ChatScreen") iconName = "chat";
+          if (route.name === "Chat") iconName = "chat";
           if (route.name === "Consultas") iconName = "calendar-today";
-
+          if (route.name === "Configurações") iconName = "settings";
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Home" }} />
-      <Tab.Screen name="ChatScreen" component={ChatListScreen} options={{ title: "Chat"}}/>
-      <Tab.Screen name="Consultas" component={QueriesScreen} options={{ title: "Consultas "}}/>
+      <Tab.Screen name="Chat" component={ChatListScreen} options={{ title: "Chat" }} />
+      <Tab.Screen name="Consultas" component={QueriesScreen} options={{ title: "Consultas" }} />
+      <Tab.Screen name="Configurações" component={SettingsScreen} options={{ title: "Config" }} />
     </Tab.Navigator>
   );
 }

@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Provider as PaperProvider } from "react-native-paper";
 import { supabase } from "./src/supaconfig";
+import { RootStackParamList } from "./src/navigation/types";
 
 import LoginScreen from "./src/screens/LoginScreen";
 import RegisterScreen from "./src/screens/RegisterScreen";
@@ -12,8 +13,11 @@ import PsychologistBottomTabs from "./src/navigation/PsychologistBottomTabs";
 import SearchScreen from "./src/screens/paciente/SearchScreen";
 import HistoryScreen from "./src/screens/psicologo/HistoryScreen";
 import PsicoAgenda from "./src/screens/psicologo/PsicoAgenda";
+import ProfileScreen from "./src/screens/ProfileScreen";
+import ChatScreen from "./src/screens/ChatScreen";
+import PatientsScreen from "./src/screens/psicologo/PatientsScreen";
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [session, setSession] = useState<any>(null);
@@ -91,6 +95,9 @@ export default function App() {
               <Stack.Screen name="Search" component={SearchScreen} />
               <Stack.Screen name="History" component={HistoryScreen} />
               <Stack.Screen name="Queries" component={PsicoAgenda} />
+              <Stack.Screen name="Profile" component={ProfileScreen} />
+              <Stack.Screen name="Conversation" component={ChatScreen} />
+              <Stack.Screen name="Patients" component={PatientsScreen} />
             </>
           ) : (
             <>

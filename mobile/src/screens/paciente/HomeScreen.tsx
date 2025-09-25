@@ -68,7 +68,6 @@ export default function HomeScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>
-        <Appbar.Action icon="menu" onPress={() => {}} />
         <View style={styles.headerContent}>
           <Text style={styles.welcomeText}>Bem-vindo(a),</Text>
           <Text style={styles.nameText}>{name || "Usuário"}</Text>
