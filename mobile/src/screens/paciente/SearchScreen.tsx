@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-nat
 import { Appbar, Text, Avatar, Searchbar, Chip, Button, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { supabase } from "../../supaconfig";
+import { supabase } from "../../services/supaconfig";
 import { LuminaAPI, PsychologistSearch } from "../../services/api";
 
 export default function SearchScreen() {

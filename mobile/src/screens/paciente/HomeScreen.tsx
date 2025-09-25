@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Appbar, Text, Avatar, Searchbar, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { supabase } from "../../supaconfig";
+import { supabase } from "../../services/supaconfig";
 import { LuminaAPI, PsychologistRecommendation } from "../../services/api";
 
 export default function HomeScreen({ navigation }: any) {

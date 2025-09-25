@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Appbar, Card, Text, Avatar, List } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { supabase } from "../../supaconfig";
+import { supabase } from "../../services/supaconfig";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/types";

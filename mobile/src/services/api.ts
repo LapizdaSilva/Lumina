@@ -1,4 +1,4 @@
-import { supabase } from '../supaconfig';
+import { supabase } from './supaconfig';
 
 // Tipos TypeScript para as respostas da API
 export interface PsychologistRecommendation {

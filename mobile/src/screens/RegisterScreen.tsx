@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text, RadioButton } from 'react-native-paper';
-import { supabase } from '.././supaconfig';
+import { supabase } from '../services/supaconfig';
 
 export default function RegisterScreen({ navigation }: any) {
   const [name, setName] = useState('');

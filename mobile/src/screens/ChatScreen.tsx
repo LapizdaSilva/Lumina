@@ -19,7 +19,7 @@ import {
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { supabase } from "../supaconfig";
+import { supabase } from "../services/supaconfig";
 import { LuminaAPI, Message } from "../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/types";

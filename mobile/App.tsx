@@ -3,7 +3,7 @@ import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Provider as PaperProvider } from "react-native-paper";
-import { supabase } from "./src/supaconfig";
+import { supabase } from "./src/services/supaconfig";
 import { RootStackParamList } from "./src/navigation/types";
 
 import LoginScreen from "./src/screens/LoginScreen";

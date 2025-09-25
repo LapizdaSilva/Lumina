@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-nat
 import { Appbar, Text, Avatar, Button, TextInput, ActivityIndicator } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { supabase } from "../supaconfig";
+import { supabase } from "../services/supaconfig";
 import { LuminaAPI } from "../services/api";
 
 interface UserProfile {
