@@ -21,6 +21,8 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { supabase } from "../supaconfig";
 import { LuminaAPI, Message } from "../services/api";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/types";
 
 interface ChatScreenParams {
   otherUserId: string;
@@ -36,7 +38,7 @@ export default function ChatScreen() {
   const [userId, setUserId] = useState<string>("");
   const flatListRef = useRef<FlatList>(null);
   
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const route = useRoute();
   const { otherUserId, otherUserName, otherUserAvatar } = route.params as ChatScreenParams;
 
@@ -60,7 +62,7 @@ export default function ChatScreen() {
     try {
       setLoading(true);
       const chatMessages = await LuminaAPI.getConversationMessages(currentUserId, otherUserId);
-      setMessages(chatMessages.reverse());
+      setMessages(chatMessages.reverse()); 
     } catch (error) {
       console.error("Erro ao carregar mensagens:", error);
       Alert.alert("Erro", "Não foi possível carregar as mensagens.");
@@ -101,19 +103,7 @@ export default function ChatScreen() {
   };
 
   const handleVideoCall = () => {
-    Alert.alert(
-      "Chamada de Vídeo",
-      `Iniciando chamada de vídeo com ${otherUserName}...`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        { 
-          text: "Conectar", 
-          onPress: () => {
-            Alert.alert("Conectando...", "Funcionalidade de vídeo chamada será implementada em breve!");
-          }
-        }
-      ]
-    );
+    navigation.navigate("VideoCall")
   };
 
   const formatMessageTime = (timeString: string) => {

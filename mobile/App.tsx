@@ -16,6 +16,7 @@ import PsicoAgenda from "./src/screens/psicologo/PsicoAgenda";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ChatScreen from "./src/screens/ChatScreen";
 import PatientsScreen from "./src/screens/psicologo/PatientsScreen";
+import VideoCallScreen from "./src/screens/VideoScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -98,6 +99,7 @@ export default function App() {
               <Stack.Screen name="Profile" component={ProfileScreen} />
               <Stack.Screen name="Conversation" component={ChatScreen} />
               <Stack.Screen name="Patients" component={PatientsScreen} />
+              <Stack.Screen name="VideoCall" component={VideoCallScreen} />
             </>
           ) : (
             <>

@@ -21,10 +21,16 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.lapisdasilva.lumina"
     },
     "web": {
       "favicon": "./assets/favicone.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ae6f2263-2555-473c-8c51-5bf6441e0163"
+      }
     }
   }
 }
