@@ -11,12 +11,12 @@ import RegisterScreen from "./src/screens/RegisterScreen";
 import BottomTabs from "./src/navigation/BottomTabs";
 import PsychologistBottomTabs from "./src/navigation/PsychologistBottomTabs";
 import SearchScreen from "./src/screens/paciente/SearchScreen";
-import HistoryScreen from "./src/screens/psicologo/HistoryScreen";
 import PsicoAgenda from "./src/screens/psicologo/PsicoAgenda";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ChatScreen from "./src/screens/ChatScreen";
 import PatientsScreen from "./src/screens/psicologo/PatientsScreen";
 import VideoCallScreen from "./src/screens/VideoScreen";
+import ReportScreen from "./src/screens/psicologo/ReportScreen";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -94,12 +94,12 @@ export default function App() {
             <>
               <Stack.Screen name="Home" component={MainNavigator} />
               <Stack.Screen name="Search" component={SearchScreen} />
-              <Stack.Screen name="History" component={HistoryScreen} />
               <Stack.Screen name="Queries" component={PsicoAgenda} />
               <Stack.Screen name="Profile" component={ProfileScreen} />
               <Stack.Screen name="Conversation" component={ChatScreen} />
               <Stack.Screen name="Patients" component={PatientsScreen} />
               <Stack.Screen name="VideoCall" component={VideoCallScreen} />
+              <Stack.Screen name="Reports" component={ReportScreen} />
             </>
           ) : (
             <>

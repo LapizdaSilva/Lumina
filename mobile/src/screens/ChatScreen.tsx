@@ -89,7 +89,6 @@ export default function ChatScreen() {
       setMessages(prev => [...prev, tempMessage]);
       setNewMessage("");
       
-      // Scroll para o final
       setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
       }, 100);
@@ -219,6 +218,7 @@ const styles = StyleSheet.create({
   },
   headerAvatar: {
     marginLeft: 8,
+    marginRight: 8,
   },
   headerTitle: {
     fontWeight: "bold",

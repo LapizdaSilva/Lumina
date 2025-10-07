@@ -32,7 +32,6 @@ export default function HomeScreen({ navigation }: any) {
             setName(data.full_name);
           }
 
-          // Carregar recomendações de psicólogos
           const recommendationsData = await LuminaAPI.getPsychologistRecommendations(user.id);
           setRecommendations(recommendationsData);
         }
@@ -72,10 +71,12 @@ export default function HomeScreen({ navigation }: any) {
           <Text style={styles.welcomeText}>Bem-vindo(a),</Text>
           <Text style={styles.nameText}>{name || "Usuário"}</Text>
         </View>
-        <Avatar.Image 
-          size={40} 
-          source={{ uri: "https://randomuser.me/api/portraits/men/2.jpg" }} 
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          <Avatar.Image 
+            size={50} 
+            source={{ uri: "https://randomuser.me/api/portraits/men/2.jpg" }} 
+          />
+        </TouchableOpacity>
       </Appbar.Header>
 
       <ScrollView style={styles.content}>

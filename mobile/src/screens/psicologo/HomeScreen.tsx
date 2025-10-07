@@ -12,7 +12,6 @@ interface Notification {
   patientName: string;
   message: string;
   avatar: string;
-  
 }
 
 export default function PsychologistHomeScreen() {
@@ -70,15 +69,16 @@ export default function PsychologistHomeScreen() {
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>
-        <Appbar.Action icon="menu" onPress={() => {}} />  
         <View style={styles.headerContent}>
           <Text style={styles.welcomeText}>Bem-vindo(a),</Text>
           <Text style={styles.nameText}>{name || "Carolina"}</Text>
         </View>
-        <Avatar.Image 
-          size={40}
-          source={{ uri: "https://randomuser.me/api/portraits/women/5.jpg" }} 
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          <Avatar.Image 
+          size={50}
+          source={{ uri: "https://randomuser.me/api/portraits/men/10.jpg" }} 
+          />
+        </TouchableOpacity>
       </Appbar.Header>
 
       <ScrollView style={styles.content}>
@@ -91,19 +91,22 @@ export default function PsychologistHomeScreen() {
               <MaterialIcons name="calendar-today" size={24} color="white" />
               <Text style={styles.cardText}>Agenda</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={[styles.actionCard, styles.reportsCard]}>
-              <MaterialIcons name="assessment" size={24} color="white" />
-              <Text style={styles.cardText}>Relatórios</Text>
+
+            <TouchableOpacity style={[styles.actionCard, styles.patientsCard, styles.fullWidth]}
+              onPress={() => navigation.navigate("Patients")}
+            >
+              <MaterialIcons name="people" size={24} color="white" />
+              <Text style={styles.cardText}>Meus pacientes</Text>
             </TouchableOpacity>
           </View>
-          
-          <TouchableOpacity style={[styles.actionCard, styles.patientsCard, styles.fullWidth]}
-            onPress={() => navigation.navigate("Patients")}
-          >
-            <MaterialIcons name="people" size={24} color="white" />
-            <Text style={styles.cardText}>Meus pacientes</Text>
-          </TouchableOpacity>
+
+          {/* Botão para navegação para tela de relatórios  */}
+            {/* <TouchableOpacity style={[styles.actionCard, styles.reportsCard]}
+              onPress={() => navigation.navigate ("Reports")}
+            >
+              <MaterialIcons name="assessment" size={24} color="white" />
+              <Text style={styles.cardText}>Relatórios</Text>
+            </TouchableOpacity> */}
         </View>
 
         {/* Notificações Recentes */}

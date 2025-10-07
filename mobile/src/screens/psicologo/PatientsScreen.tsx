@@ -13,7 +13,7 @@ interface Patient {
   sessionType: "Online" | "Presencial";
 }
 
-export default function PatientsScreen() {
+export default function PatientsScreen({navigation}: any) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   
@@ -66,9 +66,8 @@ export default function PatientsScreen() {
   return (
     <View style={styles.container}>
       <Appbar.Header style={styles.header}>
-        <Appbar.BackAction onPress={() => {}} />
+        <Appbar.BackAction onPress={() => {navigation.navigate("Home")}} />
         <Appbar.Content title="Meus Pacientes" titleStyle={styles.headerTitle} />
-        <Appbar.Action icon="plus" onPress={() => {}} />
       </Appbar.Header>
 
       <View style={styles.content}>
@@ -188,9 +187,6 @@ const styles = StyleSheet.create({
   searchBar: {
     marginBottom: 16,
     elevation: 2,
-  },
-  filtersContainer: {
-    marginBottom: 10,
   },
   filterChip: {
     marginRight: 8,
