@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { supabase } from '../services/supaconfig';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
@@ -23,6 +24,8 @@ export default function LoginScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
+      <MaterialCommunityIcons name="lightbulb" size={100} color="#6200ee" style={{ alignSelf: 'center', marginBottom: 20 }} />
+      <Text style={styles.logo}> Lumina </Text>
       <Text style={styles.title}>Bem-vindo de volta!</Text>
       <TextInput
         label="Email"
@@ -65,6 +68,13 @@ export default function LoginScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  logo: {
+    fontSize: 46,
+    fontWeight: 'bold',
+    marginBottom: 50,
+    textAlign: 'center',
+    color: '#6200ee',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',

@@ -9,6 +9,7 @@ export type RootStackParamList = {
   Patients: undefined;
   VideoCall: undefined;
   Reports: undefined;
+  Welcome: undefined;
   Conversation: {
     otherUserId: string;
     otherUserName: string;
