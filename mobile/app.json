@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "Lumina",
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icone.png",
+    "icon": "./assets/image.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
