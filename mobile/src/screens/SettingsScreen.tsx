@@ -17,8 +17,6 @@ import { LuminaAPI } from "../services/api";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/types";
 
-// Removed unused NavigationProp type
-
 interface UserProfile {
   id: string;
   full_name: string;

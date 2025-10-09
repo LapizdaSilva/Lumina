@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Provider as PaperProvider } from "react-native-paper";
+import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 import { supabase } from "./src/services/supaconfig";
 import { RootStackParamList } from "./src/navigation/types";
 
@@ -84,10 +84,21 @@ export default function App() {
     );
   }
 
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: '#f5f5f5',
+      primary: '#6200ee',
+      text: '#333', 
+    },
+  };
+
+
   const MainNavigator = userRole === "psychologist" ? PsychologistBottomTabs : BottomTabs;
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {session && session.user ? (

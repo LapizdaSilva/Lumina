@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Lumina",
-    "slug": "mobile",
+    "slug": "lumina",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/image.png",
@@ -29,8 +29,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "ae6f2263-2555-473c-8c51-5bf6441e0163"
+        "projectId": "807d557c-1917-45c7-a507-6074fe9a41d1"
       }
-    }
+    },
+    "owner": "lapisdasilva"
   }
 }

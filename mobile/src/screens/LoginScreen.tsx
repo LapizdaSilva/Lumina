@@ -18,7 +18,7 @@ export default function LoginScreen({ navigation }: any) {
 
     if (error) {
       Alert.alert('Erro de Login', error.message);
-    }
+    } 
     setLoading(false);
   };
 
