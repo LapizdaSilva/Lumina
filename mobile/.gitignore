@@ -36,6 +36,3 @@ yarn-error.*
 # generated native folders
 /ios
 /android
-
-# misc
-/src/services
