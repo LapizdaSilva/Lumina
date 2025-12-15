@@ -27,6 +27,8 @@ interface UserProfile {
 export default function SettingsScreen() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
@@ -125,12 +127,50 @@ export default function SettingsScreen() {
             <Text style={styles.profileRole}>
               {profile?.role === 'psychologist' ? 'Psicólogo(a)' : 'Paciente'}
             </Text>
-            <Text style={styles.profileAction}>Toque para ver perfil</Text>
+            <Text style={styles.profileAction}>Toque para editar perfil</Text>
           </View>
           <MaterialIcons name="chevron-right" size={24} color="#666" />
         </TouchableOpacity>
 
         <Divider style={styles.divider} />
+
+        {/* Configurações de Notificação */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Notificações</Text>
+          
+          <List.Item
+            title="Notificações Push"
+            description="Receber notificações de mensagens e consultas"
+            left={(props) => <List.Icon {...props} icon="bell-outline" />}
+            right={() => (
+              <Switch
+                value={notificationsEnabled}
+                onValueChange={setNotificationsEnabled}
+                color="#1976d2"
+              />
+            )}
+          />
+        </View>
+
+        <Divider style={styles.divider} />
+
+        {/* Configurações de Aparência */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Aparência</Text>
+          
+          <List.Item
+            title="Modo Escuro"
+            description="Ativar tema escuro"
+            left={(props) => <List.Icon {...props} icon="theme-light-dark" />}
+            right={() => (
+              <Switch
+                value={darkModeEnabled}
+                onValueChange={setDarkModeEnabled}
+                color="#1976d2"
+              />
+            )}
+          />
+        </View>
 
         <Divider style={styles.divider} />
 

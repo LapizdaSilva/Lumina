@@ -26,48 +26,49 @@ export default function App() {
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
-    let subscription: { unsubscribe: () => void } | null = null;
+    let subscription: any = null;
 
-    const initSession = async () => {
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
+    const init = async () => {
+      const {
+        data: { session: initialSession },
+      } = await supabase.auth.getSession();
+
       setSession(initialSession);
-      
+
       if (initialSession?.user) {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from("profiles")
           .select("role")
           .eq("id", initialSession.user.id)
           .single();
-        
-        if (!error && data) {
-          setUserRole(data.role);
-        }
+
+        if (data) setUserRole(data.role);
       }
-      
+
       setLoading(false);
 
-      const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-        setSession(session);
-        
-        if (session?.user) {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", session.user.id)
-            .single();
-          
-          if (!error && data) {
-            setUserRole(data.role);
-          }
-        } else {
-          setUserRole(null);
-        }
-      });
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        async (_event, newSession) => {
+          setSession(newSession);
 
-      subscription = listener.subscription;
+          if (newSession?.user) {
+            const { data } = await supabase
+              .from("profiles")
+              .select("role")
+              .eq("id", newSession.user.id)
+              .single();
+
+            if (data) setUserRole(data.role);
+          } else {
+            setUserRole(null);
+          }
+        }
+      );
+
+      subscription = authListener.subscription;
     };
 
-    initSession();
+    init();
 
     return () => {
       if (subscription) subscription.unsubscribe();
@@ -77,7 +78,9 @@ export default function App() {
   if (loading) {
     return (
       <PaperProvider>
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <ActivityIndicator size="large" />
         </View>
       </PaperProvider>
@@ -88,14 +91,14 @@ export default function App() {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      background: '#f5f5f5',
-      primary: '#6200ee',
-      text: '#333', 
+      background: "#f5f5f5",
+      primary: "#6200ee",
+      text: "#333",
     },
   };
 
-
-  const MainNavigator = userRole === "psychologist" ? PsychologistBottomTabs : BottomTabs;
+  const MainNavigator =
+    userRole === "psychologist" ? PsychologistBottomTabs : BottomTabs;
 
   return (
     <PaperProvider theme={theme}>

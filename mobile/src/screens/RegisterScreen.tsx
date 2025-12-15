@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text, RadioButton } from 'react-native-paper';
 import { supabase } from '../services/supaconfig';
+import { KeyboardAvoidingView } from 'react-native';
 
 export default function RegisterScreen({ navigation }: any) {
   const [name, setName] = useState('');
@@ -176,85 +177,87 @@ export default function RegisterScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Criar Nova Conta</Text>
-      <TextInput
-        label="Nome Completo"
-        value={name}
-        onChangeText={setName}
-        mode="outlined"
-        style={styles.input}
-        autoCapitalize="words"
-      />
+      <KeyboardAvoidingView behavior="padding" style={styles.inputContainer}>
+        <Text style={styles.title}>Criar Nova Conta</Text>
+        <TextInput
+          label="Nome Completo"
+          value={name}
+          onChangeText={setName}
+          mode="outlined"
+          style={styles.input}
+          autoCapitalize="words"
+        />
 
-      <TextInput
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        mode="outlined"
-        style={styles.input}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+        <TextInput
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          mode="outlined"
+          style={styles.input}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-      <TextInput
-        label="Senha"
-        value={password}
-        onChangeText={setPassword}
-        mode="outlined"
-        secureTextEntry={true }
-        style={styles.input}
-        autoCapitalize='none'
-      />
+        <TextInput
+          label="Senha"
+          value={password}
+          onChangeText={setPassword}
+          mode="outlined"
+          secureTextEntry={true }
+          style={styles.input}
+          autoCapitalize='none'
+        />
 
-      <TextInput
-        label="CPF"
-        value={cpf}
-        onChangeText={text => setCpf(formatCPF(text))}
-        mode="outlined"
-        style={styles.input}
-        keyboardType="numeric"
-      />
+        <TextInput
+          label="CPF"
+          value={cpf}
+          onChangeText={text => setCpf(formatCPF(text))}
+          mode="outlined"
+          style={styles.input}
+          keyboardType="numeric"
+        />
 
-      <TextInput
-        label="Data de Nascimento (DD/MM/AAAA)"
-        value={dob}
-        onChangeText={text => setDob(formatDate(text))} 
-        mode="outlined"
-        style={styles.input}    
-        keyboardType="numeric"
-        placeholder="DD/MM/AAAA"
-      />
+        <TextInput
+          label="Data de Nascimento (DD/MM/AAAA)"
+          value={dob}
+          onChangeText={text => setDob(formatDate(text))} 
+          mode="outlined"
+          style={styles.input}    
+          keyboardType="numeric"
+          placeholder="DD/MM/AAAA"
+        />
 
-      <View style={styles.radioGroup}>
-        <Text style={styles.radioLabel}>Você é:</Text>
-        <RadioButton.Group onValueChange={setUserType} value={userType}>
-          <View style={styles.radioItem}>
-            <RadioButton value="patient" />
-            <Text>Paciente</Text>
-          </View>
-          <View style={styles.radioItem}>
-            <RadioButton value="psychologist" />
-            <Text>Psicólogo</Text>
-          </View>
-        </RadioButton.Group>
-      </View>
+        <View style={styles.radioGroup}>
+          <Text style={styles.radioLabel}>Você é:</Text>
+          <RadioButton.Group onValueChange={setUserType} value={userType}>
+            <View style={styles.radioItem}>
+              <RadioButton value="patient" />
+              <Text>Paciente</Text>
+            </View>
+            <View style={styles.radioItem}>
+              <RadioButton value="psychologist" />
+              <Text>Psicólogo</Text>
+            </View>
+          </RadioButton.Group>
+        </View>
 
-      <Button
-        mode="contained"
-        onPress={handleRegister}
-        loading={loading}
-        disabled={loading}
-        style={styles.button}
-      >
-        Registrar
-      </Button>
-      <Button
-        mode="text"
-        onPress={() => navigation.navigate('Login')}
-        style={styles.button}
-      >
-        Já tem uma conta? Faça login
-      </Button>
+        <Button
+          mode="contained"
+          onPress={handleRegister}
+          loading={loading}
+          disabled={loading}
+          style={styles.button}
+        >
+          Registrar
+        </Button>
+        <Button
+          mode="text"
+          onPress={() => navigation.navigate('Login')}
+          style={styles.button}
+        >
+          Já tem uma conta? Faça login
+        </Button>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -292,5 +295,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  inputContainer: {
+    width: '100%',
+    marginBottom: 20,
+    justifyContent: 'center',
   },
 });

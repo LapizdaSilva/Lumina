@@ -1,6 +1,5 @@
 import { supabase } from './supaconfig';
 
-// Tipos TypeScript para as respostas da API
 export interface PsychologistRecommendation {
   id: string;
   name: string;
@@ -38,6 +37,7 @@ export interface AgendaItem {
   payment_type: string;
   status: string;
   notes: string | null;
+  patient_id: string;
 }
 
 export interface Patient {
@@ -77,7 +77,6 @@ export interface Notification {
   created_at: string;
 }
 
-// Serviços de API
 export class LuminaAPI {
   
   // Obter recomendações de psicólogos para a HomeScreen do paciente
@@ -90,7 +89,6 @@ export class LuminaAPI {
     return data || [];
   }
 
-  // Buscar psicólogos com filtros
   static async searchPsychologists(
     searchQuery?: string, 
     specialtyFilter?: string, 
@@ -116,18 +114,31 @@ export class LuminaAPI {
     return data || [];
   }
 
-  // Obter agenda do psicólogo
   static async getPsychologistAgenda(psychologistId: string, date?: string): Promise<AgendaItem[]> {
     const { data, error } = await supabase.rpc('get_psychologist_agenda', {
       psychologist_uuid: psychologistId,
-      target_date: date || new Date().toISOString().split('T')[0]
+      target_date: date || new Date().toLocaleDateString('en-CA')
     });
     
     if (error) throw error;
     return data || [];
   }
 
-  // Obter pacientes do psicólogo
+  static async getPsychologistAgendaForMonth(
+    psychologistId: string,
+    year: number,
+    month: number
+  ): Promise<(AgendaItem & { appointment_date: string })[]> {
+    const { data, error } = await supabase.rpc('get_psychologist_agenda_for_month', {
+      psychologist_uuid: psychologistId,
+      target_year: year,
+      target_month: month,
+    });
+
+    if (error) throw error;
+    return data || [];
+  }
+
   static async getPsychologistPatients(psychologistId: string): Promise<Patient[]> {
     const { data, error } = await supabase.rpc('get_psychologist_patients', {
       psychologist_uuid: psychologistId
@@ -238,6 +249,18 @@ export class LuminaAPI {
     
     if (error) throw error;
   }
+
+  static async getNotifications(userId: string) {
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
 
   // Atualizar status de consulta
   static async updateAppointmentStatus(appointmentId: string, status: string): Promise<void> {

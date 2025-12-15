@@ -12,10 +12,8 @@ import {
   Appbar, 
   Text, 
   TextInput, 
-  IconButton, 
   Avatar, 
   ActivityIndicator,
-  Button 
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -244,7 +242,7 @@ const styles = StyleSheet.create({
   },
   messagesContainer: {
     padding: 16,
-    paddingBottom: 100, // Espaço para o botão flutuante
+    paddingBottom: 100, 
   },
   messageContainer: {
     marginVertical: 4,

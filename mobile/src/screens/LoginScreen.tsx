@@ -3,6 +3,7 @@ import { View, StyleSheet, Alert } from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import { supabase } from '../services/supaconfig';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { KeyboardAvoidingView } from 'react-native';
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
@@ -24,45 +25,47 @@ export default function LoginScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <MaterialCommunityIcons name="lightbulb" size={100} color="#6200ee" style={{ alignSelf: 'center', marginBottom: 20 }} />
-      <Text style={styles.logo}> Lumina </Text>
-      <Text style={styles.title}>Bem-vindo de volta!</Text>
-      <TextInput
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        mode="outlined"
-        style={styles.input}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        label="Senha"
-        value={password}
-        onChangeText={setPassword}
-        mode="outlined"
-        secureTextEntry={true}
-        style={styles.input}
-        autoCapitalize='none'
-        textContentType="password"
-        importantForAutofill="no"
-      />
-      <Button
-        mode="contained"
-        onPress={handleLogin}
-        loading={loading}
-        disabled={loading}
-        style={styles.button}
-      >
-        Entrar
-      </Button>
-      <Button
-        mode="text"
-        onPress={() => navigation.navigate('Register')}
-        style={styles.button}
-      >
-        Não tem uma conta? Cadastre-se
-      </Button>
+      <KeyboardAvoidingView behavior="padding" style={styles.inputContainer}>
+        <MaterialCommunityIcons name="lightbulb" size={100} color="#6200ee" style={{ alignSelf: 'center', marginBottom: 20 }} />
+        <Text style={styles.logo}> Lumina </Text>
+        <Text style={styles.title}>Bem-vindo de volta!</Text>
+        <TextInput
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          mode="outlined"
+          style={styles.input}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          label="Senha"
+          value={password}
+          onChangeText={setPassword}
+          mode="outlined"
+          secureTextEntry={true}
+          style={styles.input}
+          autoCapitalize='none'
+          textContentType="password"
+          importantForAutofill="no"
+        />
+        <Button
+          mode="contained"
+          onPress={handleLogin}
+          loading={loading}
+          disabled={loading}
+          style={styles.button}
+        >
+          Entrar
+        </Button>
+        <Button
+          mode="text"
+          onPress={() => navigation.navigate('Register')}
+          style={styles.button}
+        >
+          Não tem uma conta? Cadastre-se
+        </Button>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -93,5 +96,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  inputContainer: {
+    width: '100%',
+    marginBottom: 20,
+    justifyContent: 'center',
   },
 });

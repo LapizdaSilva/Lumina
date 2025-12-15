@@ -58,8 +58,8 @@ export default function PatientsScreen({navigation}: any) {
   const filteredPatients = patients.filter(patient => {
     const matchesSearch = patient.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = selectedFilter === "all" || 
-                         (selectedFilter === "active" && patient.status === "active") ||
-                         (selectedFilter === "inactive" && patient.status === "inactive");
+    (selectedFilter === "active" && patient.status === "active") ||
+    (selectedFilter === "inactive" && patient.status === "inactive");
     return matchesSearch && matchesFilter;
   });
 
